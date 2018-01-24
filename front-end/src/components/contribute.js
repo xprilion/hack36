@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class contribute extends Component {
 	render() {
 		return (
-			<div>Contribute your location and details</div>
+			<div className="hp">Contribute your location and details</div>
 		);
 	}
 }
