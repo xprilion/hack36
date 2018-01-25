@@ -14,3 +14,14 @@ a{
 .hp{
   text-align: center;
 }
+.linking{
+	text-decoration: none;
+	color: #fff;
+}
+.linking.menu{
+	color: #000;
+}
+.paper{
+	background-color: #00ACA1!important;
+	color: #fff!important;
+}
