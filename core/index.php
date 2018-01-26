@@ -3,11 +3,13 @@
 <head>
 	<meta charset='UTF-8' />
 	<style>
+
 		input, textarea {border:1px solid #CCC;margin:0px;padding:0px}
 
 		#body {max-width:800px;margin:auto}
 		#log {width:100%;height:400px}
 		#message {width:100%;line-height:20px}
+
 	</style>
 	<script src="js/jquery.min.js"></script>
 	<script src="js/fancywebsocket.js"></script>
@@ -28,7 +30,7 @@
 
 		$(document).ready(function() {
 			log('Connecting...');
-			Server = new FancyWebSocket('ws://192.168.0.109:9300');
+			Server = new FancyWebSocket('ws://127.0.0.1:9300');
 
 			$('#message').keypress(function(e) {
 				if ( e.keyCode == 13 && this.value ) {
