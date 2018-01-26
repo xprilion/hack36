@@ -25,18 +25,35 @@ class home extends Component {
 	}	
 	componentDidMount(){
 		this.ws = new WebSocket('ws://127.0.0.1:9300');
+		console.log("this just happend");
 	}
 	handleChange = (e)=>{
 		this.setState({train_no:e.target.value});
 	}
 	onTrain = ()=>{
-		this.setState({onTrain:'yes'});
+		this.setState({onTrain:'yes'},()=>{
+			this.ws.send(JSON.stringify(this.state));
+			this.ws.onmessage = evt =>{
+				console.log(evt.data);
+			}
+		});
 	}
 	notOnTrain = ()=>{
-		this.setState({onTrain:'no'});
+		this.setState({onTrain:'no'},()=>{
+			this.ws.send(JSON.stringify(this.state));
+			this.ws.onmessage = evt =>{
+				console.log(evt.data);
+			}
+		});
+		
 	}
 	stopIt = ()=>{
-		this.setState({type:'admin'});
+		this.setState({type:'admin'},()=>{
+			this.ws.send(JSON.stringify(this.state));
+			this.ws.onmessage = evt =>{
+				console.log(evt.data);
+			}
+		});
 	}
 	render() {
 		return (
