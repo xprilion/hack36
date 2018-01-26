@@ -16,25 +16,37 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 	global $Server,  $adminID;
 	$ip = long2ip( $Server->wsClients[$clientID][6] );
 
+	$data = json_decode($message, TRUE);
+
 	// check if message length is 0
 	if ($messageLength == 0) {
 		$Server->wsClose($clientID);
 		return;
 	}
 
-	if ($message == "2101996") {
-		$adminID = $clientID;
-		$Server->wsSend($adminID, "Welcome Admin.");
-		return;
+	$res = array();
+
+	$restr = "";
+
+	if($data["type"]=="admin"){
+		if ($data["load"] == "2101996") {
+			$adminID = $clientID;
+			$Server->wsSend($adminID, "Welcome Admin.");
+			return;
+		}
+
+		if(($clientID == $adminID) && ($data["load"] == "stop")){
+			exit(0);
+		}
+
 	}
+	elif($data["type"]=="train"){
+		if ($data["onTrain"] == "no") {
+			$res["answer"] = checkTrain($data["trainNo"]);
+		}
 
-	if(($clientID == $adminID) && ($message == "stop")){
-		exit(0);
-	}
-
-	else{
-
-
+		$restr = json_encode($res);
+		$Server->wsSend($clientID, $restr);
 	}
 }
 
@@ -60,19 +72,13 @@ function wsOnClose($clientID, $status) {
 
 	$Server->log( "$ip ($clientID) has disconnected." );
 
-	// //Send a user left notice to everyone in the room
-	// foreach ( $Server->wsClients as $id => $client )
-	// 	if ($id != $adminID)
-	// 		$Server->wsSend($id, "Visitor $clientID ($ip) has left the room.");
 }
 
-// start the server
 $Server = new PHPWebSocket();
 $Server->bind('message', 'wsOnMessage');
 $Server->bind('open', 'wsOnOpen');
 $Server->bind('close', 'wsOnClose');
-// for other computers to connect, you will probably need to change this to your LAN IP or external IP,
-// alternatively use: gethostbyaddr(gethostbyname($_SERVER['SERVER_NAME']))
+
 $Server->wsStartServer('127.0.0.1', 9300);
 
 ?>
