@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
 import '../index.css';
+import {geolocated} from 'react-geolocated';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 const style = {
@@ -16,7 +17,10 @@ class home extends Component {
 		this.state = {
 			type:'train',
 			train_no: '',
-			onTrain:''
+			onTrain:'',
+			latitude:'',
+			longitude:'',
+			load:''
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.onTrain = this.onTrain.bind(this);
@@ -25,7 +29,6 @@ class home extends Component {
 	}	
 	componentDidMount(){
 		this.ws = new WebSocket('ws://127.0.0.1:9300');
-		console.log("this just happend");
 	}
 	handleChange = (e)=>{
 		this.setState({train_no:e.target.value});
@@ -48,12 +51,18 @@ class home extends Component {
 		
 	}
 	stopIt = ()=>{
-		this.setState({type:'admin'},()=>{
+		this.setState({type:'admin',load:'stop'},()=>{
 			this.ws.send(JSON.stringify(this.state));
 			this.ws.onmessage = evt =>{
 				console.log(evt.data);
 			}
 		});
+	}
+	componentDidUpdate(previousProps, previousState){
+		if(this.state.latitude !== this.props.coords.latitude && this.state.longitude !== this.props.coords.longitude) {
+	     this.setState({latitude:this.props.coords.latitude,longitude:this.props.coords.longitude});
+	   }
+
 	}
 	render() {
 		return (
@@ -64,9 +73,26 @@ class home extends Component {
 			        <RaisedButton label="On Train" onClick={this.onTrain} /><br/>
 			        <RaisedButton label="Not on Train"  onClick={this.notOnTrain}/><br/>
 			        <RaisedButton label="Stop the server"  onClick={this.stopIt}/>
+			        
+			        {!this.props.isGeolocationAvailable
+		      ? <div>Your browser does not support Geolocation</div>
+		      : !this.props.isGeolocationEnabled
+		        ? <div>Geolocation is not enabled</div>
+		        : this.props.coords
+		          ? <div></div>
+		          : <div>Loading up the app&hellip; </div>
+		      }
 				</Paper>
       		</div>
 		);
 	}
 }
-export default home;
+export default geolocated({
+  positionOptions: {
+    enableHighAccuracy: false,
+  },
+  watchPosition: true,
+  userDecisionTimeout: null,
+  suppressLocationOnMount: false,
+  geolocationProvider: navigator.geolocation
+})(home);
