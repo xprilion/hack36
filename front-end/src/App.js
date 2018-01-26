@@ -17,11 +17,6 @@ class App extends Component {
 	toggleBar=()=>{
 		this.setState({open:!this.state.open});
 	}
-	// once the server is running try this
-	componentDidMount(){
-		this.ws = new WebSocket('ws://127.0.0.1:9300');
-		//this.ws.onopen=()=>{dispatch('open',null)};
-	}
 	  render() {
 	    return (
 	      <div className="App">
