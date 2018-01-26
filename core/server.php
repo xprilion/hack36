@@ -16,6 +16,8 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 	global $Server,  $adminID;
 	$ip = long2ip( $Server->wsClients[$clientID][6] );
 
+
+
 	$data = json_decode($message, TRUE);
 
 	// check if message length is 0
@@ -29,13 +31,13 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 	$restr = "";
 
 	if($data["type"]=="admin"){
-		if ($data["load"] == "2101996") {
-			$adminID = $clientID;
-			$Server->wsSend($adminID, "Welcome Admin.");
-			return;
-		}
+		// if ($data["load"] == "2101996") {
+		// 	$adminID = $clientID;
+		// 	$Server->wsSend($adminID, "Welcome Admin.");
+		// 	return;
+		// }
 
-		if(($clientID == $adminID) && ($data["load"] == "stop")){
+		if(($data["load"] == "stop")){
 			exit(0);
 		}
 

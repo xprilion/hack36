@@ -54,8 +54,9 @@
 	$dlon = 78.2371117;
 
 
-	$res = userTrainLoc(1, $dlon, $dlat);
+	//$res = userTrainLoc(1, $dlon, $dlat);
 
+	$res = checkTrain(1);
 
 	print "<pre>";
 	print_r(json_decode($res, TRUE));
