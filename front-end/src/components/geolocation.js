@@ -18,7 +18,7 @@ class geolocation extends Component {
 		              <tr><td>speed</td><td>{this.props.coords.speed}</td></tr>
 		            </tbody>
 		          </table>
-		          : <div>Getting the location data&hellip; </div>
+		          : <div>Loading up the app&hellip; </div>
 		);
 	}
 }
@@ -30,4 +30,4 @@ export default geolocated({
   userDecisionTimeout: null,
   suppressLocationOnMount: false,
   geolocationProvider: navigator.geolocation
-})(geolocation);;
+})(geolocation);
