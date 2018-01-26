@@ -4,10 +4,10 @@ set_time_limit(0);
 
 // include the web sockets server script (the server is started at the far bottom of this file)
 require 'class.PHPWebSocket.php';
-require 'db.php';
+//require 'db.php';
 require 'user.functions.php';
 require 'train.functions.php';
-require 'loc.functioncs.php';
+require 'loc.functions.php';
 
 $adminID = "";
 
@@ -40,9 +40,15 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 		}
 
 	}
-	elif($data["type"]=="train"){
+	else if($data["type"]=="train"){
 		if ($data["onTrain"] == "no") {
 			$res["answer"] = checkTrain($data["trainNo"]);
+		}
+		else if ($data["onTrain"] == "yes") {
+			$long = $data["lon"];
+			$lat = $data["lat"];
+
+			$res["answer"] = userTrainLoc($data["trainNo"], $lon, $lat);
 		}
 
 		$restr = json_encode($res);
