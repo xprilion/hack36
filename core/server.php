@@ -11,7 +11,7 @@ require 'loc.functions.php';
 $adminID = "";
 
 function wsOnMessage($clientID, $message, $messageLength, $binary) {
-	global $Server,  $adminID;
+	global $Server,  $mysqli;
 	$ip = long2ip( $Server->wsClients[$clientID][6] );
 
 	$chash = md5($ip);
@@ -36,27 +36,100 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 	}
 	else if($data["type"]=="train"){
 
-
 		if ($data["onTrain"] == "no") {
+
 			$res["answer"] = checkTrain($data["trainNo"]);
-		}
-		else if ($data["onTrain"] == "yes") {
-			$long = $data["lon"];
-			$lat = $data["lat"];
-			$score = -999;
 
 			$thash = md5($data["trainNo"]);
 
-			$sql = "SELECT * FROM clients where chash='$chash' AND thash = '$thash'";
+			$trainLat = 0.0;
+			$trainLon = 0.0;
+
+			$trainIs = 0;
+
+			$sql = "SELECT * FROM trains where thash = '$thash'";
 			if($result = $mysqli->query($sql)){
 				if ($result->num_rows > 0) {
-					$score = $result["score"];
+					$trainLat = $result["lat"];
+					$trainLon = $result["lon"];
+					$trainIs = 1;
 				}
 			}
 
-			$distAng = userTrainLoc($data["trainNo"], $lon, $lat);
+		}
+		else if ($data["onTrain"] == "yes") {
+			$clientLon = $data["lon"];
+			$clientLat = $data["lat"];
 
+			$thash = md5($data["trainNo"]);
 
+			$trainLat = 0.0;
+			$trainLon = 0.0;
+
+			$trainIs = 0;
+
+			$sql = "SELECT * FROM trains where thash = '$thash'";
+			if($result = $mysqli->query($sql)){
+				if ($result->num_rows > 0) {
+					$trainLat = $result["lat"];
+					$trainLon = $result["lon"];
+					$trainIs = 1;
+				}
+			}
+
+			$info = userTrainLoc($data["trainNo"], $clientLon, $clientLat, $trainLon, $trainLat);
+
+			$infoScore = $info["score"];
+			$newScore = 0.0;
+
+			$sql = "SELECT * FROM clients where chash='$chash' AND thash = '$thash'";
+			if($result = $mysqli->query($sql)){
+
+				$sqlClient = "";
+
+				if ($result->num_rows > 0) {
+					$score = $result["score"];
+
+					$newScore = 0.80*$score;
+					if($infoScore>=$score){
+						$newScore += 0.25*$infoScore;
+					}
+					else{
+						$newScore -= 0.25*$infoScore;
+					}
+
+					$sqlClient = "UPDATE clients SET score='$newScore', lat='$infoLat', lon = '$infoLon'";
+
+					//QUERY
+
+				}
+				else{
+					$sqlClient = "INSERT INTO clients (chash, thash, lat, lon, score) VALUES ('$chash', '$thash', '$lat', $lon', $infoScore)";
+
+					//QUERY
+				}
+
+				$mysqli->query($sqlClient);
+			}
+
+			$diffLat = $trainLat - $clientLat;
+			$newLat = $trainLat+$newScore*$diffLat;
+
+			$diffLon = $trainLon - $clientLon;
+			$newLon = $trainLon+$newScore*$diffLon;
+
+			$sqlTrain = "";
+
+			if($trainIs){
+				$sqlTrain = "UPDATE trains SET lat='$newLat' AND lon='$newLon' WHERE thash='$thash'";
+			}
+			else{
+				$sqlTrain = "INSERT INTO trains (thash, lat, lon) VALUES ('$thash', '$newLat', '$newLon')";
+			}
+
+			$mysqli->query($sqlTrain);
+
+			$res["answer"] = $info["alldata"];
 		}
 
 		$restr = json_encode($res);
