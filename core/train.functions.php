@@ -26,12 +26,13 @@
 
 		$r["lat"] = $lat2;
 		$r["lon"] = $lon2;
+		$r["alldata"] = $res;
 
 		return json_encode($r);
 
 	}
 
-	function userTrainLoc($trainNo, $lon1, $lat1){
+	function userTrainLoc($trainNo, $lon1, $lat1, $tlon, $tlat){
 
 		$url = 'https://api.railwayapi.com/v2/live/train/12987/date/26-01-2018/apikey/86j677u0rd/';
 		$proxy = '172.31.52.54:3128';
@@ -48,14 +49,15 @@
 
 		$res = json_decode($result, TRUE);
 
-		$lat2 = $res["current_station"]["lat"];
-		$lon2 = $res["current_station"]["lng"];
+		$curLat = $res["current_station"]["lat"];
+		$curLon = $res["current_station"]["lng"];
 
 		$unit = "K";
 
-		$dist = distance($lat1, $lon1, $lat2, $lon2, $unit);
+		$dist = distance($lat1, $lon1, $tlat, $tlon, $unit);
 
 		$nowLoc = Array('x'=> $lon1, 'y'=> $lat1);
+		$lastLoc = Array('x'=> $tlon, 'y'=> $tlat);
 
 		$r = Array();
 		$r["dist"] = $dist;
@@ -79,26 +81,33 @@
 
 		$prevStation = Array('x'=> $stations[$prevPos]["station"]["lng"], 'y'=> $stations[$prevPos]["station"]["lat"]);
 		$nextStation = Array('x'=> $stations[$nextPos]["station"]["lng"], 'y'=> $stations[$nextPos]["station"]["lat"]);
-		$currentStation = Array('x'=> $lon2, 'y'=> $lat2);
+		$currentStation = Array('x'=> $curLon, 'y'=> $curLat);
 
 		$anglePrevNext = getAngle($nowLoc, $prevStation, $nextStation);
 		$anglePrevCur = getAngle($nowLoc, $prevStation, $currentStation);
+		$angleCurLast = getAngle($nowLoc, $currentStation, $lastLoc);
 
 		$scorePrevNext = 30;
 
-		$negPrevNext = min(30, anglePrevNext);
+		$negPrevNext = min(30, $anglePrevNext);
 		$scorePrevNext -= $negPrevNext;
 
 		$scorePrevCur = 45;
 
-		$negPrevCur = min(45, anglePrevCur*3);
+		$negPrevCur = min(45, $anglePrevCur*3);
 		$scorePrevCur -= $negPrevCur;
 
-		$score = exp(-0.5*$dist)*($scorePrevCur+$scorePrevNext);
-		$score /= 75.0;
+		$scoreCurLast = 50;
+
+		$negCurlast = min(50, $angleCurLast*5);
+		$scoreCurLast -= $negCurLast;
+
+		$score = exp(-0.5*$dist)*($scorePrevCur+$scorePrevNext+$scoreCurLast);
+		$score /= 125.0;
 
 		$r["anglePrevNext"] = $anglePrevNext;
 		$r["anglePrevCur"] = $anglePrevCur;
+		$r["angleCurLast"] = $angleCurLast;
 		$r["score"] = $score;
 		$r["alldata"] = $res;
 
