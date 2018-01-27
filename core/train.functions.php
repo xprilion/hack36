@@ -117,9 +117,12 @@
 	$dlat = 25.1540;
 	$dlon = 82.94;
 
-	$res = userTrainLoc(1, $dlon, $dlat);
+	$tlat = 25.100;
+	$tlon = 82.50;
 
-	//$res = checkTrain(1);
+	$res = userTrainLoc(12987, $dlon, $dlat, $tlon, $tlat);
+
+	//$res = checkTrain(12987);
 
 	print "<pre>";
 	print_r(json_decode($res, TRUE));

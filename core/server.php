@@ -47,7 +47,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 
 			$trainIs = 0;
 
-			$sql = "SELECT * FROM trains where thash = '$thash'";
+			$sql = "SELECT * FROM train_loc where thash = '$thash'";
 			if($result = $mysqli->query($sql)){
 				if ($result->num_rows > 0) {
 					$trainLat = $result["lat"];
@@ -68,7 +68,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 
 			$trainIs = 0;
 
-			$sql = "SELECT * FROM trains where thash = '$thash'";
+			$sql = "SELECT * FROM train_loc where thash = '$thash'";
 			if($result = $mysqli->query($sql)){
 				if ($result->num_rows > 0) {
 					$trainLat = $result["lat"];
@@ -121,10 +121,10 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 			$sqlTrain = "";
 
 			if($trainIs){
-				$sqlTrain = "UPDATE trains SET lat='$newLat' AND lon='$newLon' WHERE thash='$thash'";
+				$sqlTrain = "UPDATE train_loc SET lat='$newLat' AND lon='$newLon' WHERE thash='$thash'";
 			}
 			else{
-				$sqlTrain = "INSERT INTO trains (thash, lat, lon) VALUES ('$thash', '$newLat', '$newLon')";
+				$sqlTrain = "INSERT INTO train_loc (thash, lat, lon) VALUES ('$thash', '$newLat', '$newLon')";
 			}
 
 			$mysqli->query($sqlTrain);
