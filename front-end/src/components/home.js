@@ -36,7 +36,7 @@ class home extends Component {
 		this.ws = new WebSocket('ws://127.0.0.1:9300');
 	}
 	handleChange = (e)=>{
-		this.setState({train_no:e.target.value});
+		this.setState({trainNo:e.target.value});
 	}
 	onTrain = ()=>{
 		this.setState({onTrain:'yes'},()=>{

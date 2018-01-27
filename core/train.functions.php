@@ -1,8 +1,11 @@
 <?php
 
-	function checkTrain($trainNo){
+	function checkTrain($trainNo, $trainDate){
 
-		$url = 'https://api.railwayapi.com/v2/live/train/12987/date/26-01-2018/apikey/86j677u0rd/';
+		$date = date('d-m-Y', strtotime($trainDate));
+		$url = "https://api.railwayapi.com/v2/live/train/$trainNo/date/$date/apikey/86j677u0rd/";
+		echo $url;
+
 		$proxy = '172.31.52.54:3128';
 		$proxyauth = 'edcguest:edcguest';
 		$ch = curl_init();
@@ -34,9 +37,13 @@
 
 	}
 
-	function userTrainLoc($trainNo, $lon1, $lat1, $tlon, $tlat){
+	function userTrainLoc($trainNo, $trainDate, $lon1, $lat1, $tlon, $tlat){
 
-		$url = 'https://api.railwayapi.com/v2/live/train/12987/date/26-01-2018/apikey/86j677u0rd/';
+		$date = date('d-m-Y', strtotime($trainDate));
+		$url = "https://api.railwayapi.com/v2/live/train/$trainNo/date/$date/apikey/86j677u0rd/";
+
+		echo $url;
+
 		$proxy = '172.31.52.54:3128';
 		$proxyauth = 'edcguest:edcguest';
 		$ch = curl_init();
@@ -119,20 +126,6 @@
 		// echo $json;
 		return $json;
 	}
-
-	$dlat = 25.1540;
-	$dlon = 82.94;
-
-	$tlat = 25.100;
-	$tlon = 82.50;
-
-	$res = userTrainLoc(12987, $dlon, $dlat, $tlon, $tlat);
-
-	//$res = checkTrain(12987);
-
-	print "<pre>";
-	print_r(json_decode($res, TRUE));
-	print "</pre>";
 
 	function distance($lat1, $lon1, $lat2, $lon2, $unit) {
 
