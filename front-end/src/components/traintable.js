@@ -3,7 +3,7 @@ import { Table,TableBody,TableHeader,TableHeaderColumn,TableRow,TableRowColumn }
  
 class traintable extends Component {
 	render() {
-		console.log(JSON.stringify(this.props.data));
+		console.log(this.props.data);
 		return (
 			<div>
 				<Table>
