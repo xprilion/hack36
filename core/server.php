@@ -113,7 +113,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 				echo mysqli_error($db);
 			}
 
-			$info = json_decode(userTrainLoc($trainNo, $trainDate, 81.79023, 25.44004,  $trainLon, $trainLat, $trainIs), TRUE);
+			$info = json_decode(userTrainLoc($trainNo, $trainDate, $clientLon, $clientLat,  $trainLon, $trainLat, $trainIs), TRUE);
 
 			$infoLat = $info["lat"];
 			$infoLon = $info["lon"];
@@ -202,7 +202,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 				echo mysqli_error($db);
 			}
 
-			$ret["answer"] = $info["alldata"];
+			$ret["answer"] = $info;
 		}
 
 		$restr = json_encode($ret, JSON_UNESCAPED_SLASHES);
