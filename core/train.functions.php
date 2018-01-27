@@ -15,9 +15,19 @@
 		$result = curl_exec($ch);
 		curl_close($ch);
 
+		$res = json_decode($result, TRUE);
+
+		$lat2 = $res["current_station"]["lat"];
+		$lon2 = $res["current_station"]["lng"];
+
 		//echo $result;
 
-		return $result;
+		$r = Array();
+
+		$r["lat"] = $lat2;
+		$r["lon"] = $lon2;
+
+		return json_encode($r);
 
 	}
 
@@ -43,22 +53,22 @@
 
 		$unit = "K";
 
-		echo "lat1: $lat1, lon1: $lon1 | lat2: $lat2, lon2: $lon2<br>";
+		//echo "lat1: $lat1, lon1: $lon1 | lat2: $lat2, lon2: $lon2<br>";
+
 		$dist = distance($lat1, $lon1, $lat2, $lon2, $unit);
 		$angle = getAngle($lat1, $lon1, $lat2, $lon2);
 
-		echo "dist: $dist and angle : $angle";
+		//echo "dist: $dist and angle : $angle";
 
 		$r = Array();
 		$r["dist"] = $dist;
 		$r["angle"] = $angle;
 
-		return $r;
+		return json_encode($r);
 	}
 
 	$dlat = 27.2132859;
 	$dlon = 78.2371117;
-
 
 	$res = userTrainLoc(1, $dlon, $dlat);
 
@@ -68,32 +78,6 @@
 	print_r(json_decode($res, TRUE));
 	print "</pre>";
 
-	/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	/*::                                                                         :*/
-	/*::  This routine calculates the distance between two points (given the     :*/
-	/*::  latitude/longitude of those points). It is being used to calculate     :*/
-	/*::  the distance between two locations using GeoDataSource(TM) Products    :*/
-	/*::                                                                         :*/
-	/*::  Definitions:                                                           :*/
-	/*::    South latitudes are negative, east longitudes are positive           :*/
-	/*::                                                                         :*/
-	/*::  Passed to function:                                                    :*/
-	/*::    lat1, lon1 = Latitude and Longitude of point 1 (in decimal degrees)  :*/
-	/*::    lat2, lon2 = Latitude and Longitude of point 2 (in decimal degrees)  :*/
-	/*::    unit = the unit you desire for results                               :*/
-	/*::           where: 'M' is statute miles (default)                         :*/
-	/*::                  'K' is kilometers                                      :*/
-	/*::                  'N' is nautical miles                                  :*/
-	/*::  Worldwide cities and other features databases with latitude longitude  :*/
-	/*::  are available at https://www.geodatasource.com                          :*/
-	/*::                                                                         :*/
-	/*::  For enquiries, please contact sales@geodatasource.com                  :*/
-	/*::                                                                         :*/
-	/*::  Official Web site: https://www.geodatasource.com                        :*/
-	/*::                                                                         :*/
-	/*::         GeoDataSource.com (C) All Rights Reserved 2017		   		     :*/
-	/*::                                                                         :*/
-	/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	function distance($lat1, $lon1, $lat2, $lon2, $unit) {
 
 	  $theta = $lon1 - $lon2;

@@ -13,6 +13,9 @@ $adminID = "";
 function wsOnMessage($clientID, $message, $messageLength, $binary) {
 	global $Server,  $adminID;
 	$ip = long2ip( $Server->wsClients[$clientID][6] );
+
+	$chash = md5($ip);
+
 	$data = json_decode($message, TRUE);
 
 	if ($messageLength == 0) {
@@ -32,14 +35,28 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 
 	}
 	else if($data["type"]=="train"){
+
+
 		if ($data["onTrain"] == "no") {
 			$res["answer"] = checkTrain($data["trainNo"]);
 		}
 		else if ($data["onTrain"] == "yes") {
 			$long = $data["lon"];
 			$lat = $data["lat"];
+			$score = -999;
 
-			$res["answer"] = userTrainLoc($data["trainNo"], $lon, $lat);
+			$thash = md5($data["trainNo"]);
+
+			$sql = "SELECT * FROM clients where chash='$chash' AND thash = '$thash'";
+			if($result = $mysqli->query($sql)){
+				if ($result->num_rows > 0) {
+					$score = $result["score"];
+				}
+			}
+
+			$distAng = userTrainLoc($data["trainNo"], $lon, $lat);
+
+
 		}
 
 		$restr = json_encode($res);
