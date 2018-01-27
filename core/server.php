@@ -50,7 +50,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 			$sql = "SELECT * FROM train_loc where thash = '$thash'";
 			if($result = $mysqli->query($sql)){
 				if ($result->num_rows > 0) {
-					$res = $mysqli->fetch_assoc($result);
+					$res = $result->fetch_assoc();
 					$trainLat = $res["lat"];
 					$trainLon = $res["lon"];
 					$trainIs = 1;
@@ -72,7 +72,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 			$sql = "SELECT * FROM train_loc where thash = '$thash'";
 			if($result = $mysqli->query($sql)){
 				if ($result->num_rows > 0) {
-					$res = $mysqli->fetch_assoc($result);
+					$res = $result->fetch_assoc();
 					$trainLat = $res["lat"];
 					$trainLon = $res["lon"];
 					$trainIs = 1;
@@ -93,7 +93,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 				$sqlClient = "";
 
 				if ($result->num_rows > 0) {
-					$res = $mysqli->fetch_assoc($result);
+					$res = $result->fetch_assoc();
 
 					$score = $res["score"];
 
