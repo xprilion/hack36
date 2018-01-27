@@ -3,6 +3,7 @@ import { Table,TableBody,TableHeader,TableHeaderColumn,TableRow,TableRowColumn }
  
 class traintable extends Component {
 	render() {
+		console.log(this.props.data);
 		return (
 			<div>
 				<Table>
@@ -12,12 +13,23 @@ class traintable extends Component {
 							<TableHeaderColumn>Day</TableHeaderColumn>
 							<TableHeaderColumn>Sch Dep</TableHeaderColumn>
 							<TableHeaderColumn>ETA/ATA</TableHeaderColumn>
-							<TableHeaderColumn>Delay</TableHeaderColumn>
 							<TableHeaderColumn>ETD/ATD</TableHeaderColumn>
 							<TableHeaderColumn>Delay</TableHeaderColumn>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
+						{this.props.data.answer && this.props.data.answer.route.map(res=>{
+							return(
+								<TableRow>
+									<TableRowColumn>{res.station.name}</TableRowColumn>
+									<TableRowColumn>{res.day}</TableRowColumn>
+									<TableRowColumn>{res.schdep}</TableRowColumn>
+									<TableRowColumn>{res.actarr}</TableRowColumn>
+									<TableRowColumn>{res.actdep}</TableRowColumn>
+									<TableRowColumn>{res.status}</TableRowColumn>
+								</TableRow>
+								)
+						})}
 						<TableRow>
 							<TableRowColumn>1</TableRowColumn>
 							<TableRowColumn>2</TableRowColumn>

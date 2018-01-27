@@ -48,7 +48,6 @@ class home extends Component {
 			this.ws.send(JSON.stringify(this.state));
 			this.ws.onmessage = evt =>{
 				this.setState({tab_load:evt.data});
-				console.log(evt.data);
 			}
 		});
 
