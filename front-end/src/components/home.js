@@ -4,7 +4,7 @@ import '../index.css';
 import {geolocated} from 'react-geolocated';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
-import Tablecomp from './traintable';
+//import Tablecomp from './traintable';
 const style = {
   height: 500,
   width: 500,
@@ -86,7 +86,7 @@ class home extends Component {
 		          : <div>Loading up the app, please wait&hellip; </div>
 		      }
 				</Paper>
-				<Tablecomp data={this.state.tab_load}/>
+				
       		</div>
 		);
 	}
