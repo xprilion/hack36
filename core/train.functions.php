@@ -2,7 +2,7 @@
 
 	function checkTrain($trainNo){
 
-		$url = 'https://api.railwayapi.com/v2/live/train/12987/date/25-01-2018/apikey/86j677u0rd/';
+		$url = 'https://api.railwayapi.com/v2/live/train/12987/date/26-01-2018/apikey/86j677u0rd/';
 		$proxy = '172.31.52.54:3128';
 		$proxyauth = 'edcguest:edcguest';
 		$ch = curl_init();
@@ -33,7 +33,7 @@
 
 	function userTrainLoc($trainNo, $lon1, $lat1){
 
-		$url = 'https://api.railwayapi.com/v2/live/train/12987/date/25-01-2018/apikey/86j677u0rd/';
+		$url = 'https://api.railwayapi.com/v2/live/train/12987/date/26-01-2018/apikey/86j677u0rd/';
 		$proxy = '172.31.52.54:3128';
 		$proxyauth = 'edcguest:edcguest';
 		$ch = curl_init();
@@ -53,22 +53,60 @@
 
 		$unit = "K";
 
-		//echo "lat1: $lat1, lon1: $lon1 | lat2: $lat2, lon2: $lon2<br>";
-
 		$dist = distance($lat1, $lon1, $lat2, $lon2, $unit);
-		$angle = getAngle($lat1, $lon1, $lat2, $lon2);
 
-		//echo "dist: $dist and angle : $angle";
+		$nowLoc = Array('x'=> $lon1, 'y'=> $lat1);
 
 		$r = Array();
 		$r["dist"] = $dist;
-		$r["angle"] = $angle;
+
+		$stations = $res["route"];
+
+		$trainPos = 0;
+
+		foreach ($stations as $s){
+			if($s["has_departed"] == 1){
+				$trainPos++;
+			}
+		}
+
+		if ($trainPos>0)
+			$prevPos = $trainPos-1;
+
+		$nextPos = $trainPos;
+
+		echo "<br>Prev Station=> ".$stations[$prevPos]["station"]["name"].'<br>Prev Station=> '.$stations[$nextPos]["station"]["name"].'<br>';
+
+		$prevStation = Array('x'=> $stations[$prevPos]["station"]["lng"], 'y'=> $stations[$prevPos]["station"]["lat"]);
+		$nextStation = Array('x'=> $stations[$nextPos]["station"]["lng"], 'y'=> $stations[$nextPos]["station"]["lat"]);
+		$currentStation = Array('x'=> $lon2, 'y'=> $lat2);
+
+		$anglePrevNext = getAngle($nowLoc, $prevStation, $nextStation);
+		$anglePrevCur = getAngle($nowLoc, $prevStation, $currentStation);
+
+		$scorePrevNext = 30;
+
+		$negPrevNext = min(30, anglePrevNext);
+		$scorePrevNext -= $negPrevNext;
+
+		$scorePrevCur = 45;
+
+		$negPrevCur = min(45, anglePrevCur*3);
+		$scorePrevCur -= $negPrevCur;
+
+		$score = exp(-0.5*$dist)*($scorePrevCur+$scorePrevNext);
+		$score /= 75.0;
+
+		$r["anglePrevNext"] = $anglePrevNext;
+		$r["anglePrevCur"] = $anglePrevCur;
+		$r["score"] = $score;
+		$r["alldata"] = $res;
 
 		return json_encode($r);
 	}
 
-	$dlat = 27.2132859;
-	$dlon = 78.2371117;
+	$dlat = 25.1540;
+	$dlon = 82.94;
 
 	$res = userTrainLoc(1, $dlon, $dlat);
 
@@ -96,24 +134,11 @@
 	      }
 	}
 
-	function getAngle($lat1, $lon1, $lat2, $lon2) {
-	   //difference in longitudinal coordinates
-	   $dLon = deg2rad($lon2) - deg2rad($lon1);
-
-	   //difference in the phi of latitudinal coordinates
-	   $dPhi = log(tan(deg2rad($lat2) / 2 + pi() / 4) / tan(deg2rad($lat1) / 2 + pi() / 4));
-
-	   //we need to recalculate $dLon if it is greater than pi
-	   if(abs($dLon) > pi()) {
-	      if($dLon > 0) {
-	         $dLon = (2 * pi() - $dLon) * -1;
-	      }
-	      else {
-	         $dLon = 2 * pi() + $dLon;
-	      }
-	   }
-	   //return the angle, normalized
-	   return (rad2deg(atan2($dLon, $dPhi)) + 360) % 360;
+	function getAngle($po,$c, $p1) {
+	    $poc = sqrt(pow($c['x']-$po['x'],2)+pow($c['y']-$po['y'],2)); // $po->$c (b)
+	    $p1c = sqrt(pow($c['x']-$p1['x'],2)+pow($c['y']-$p1['y'],2)); // p1->c (a)
+	    $pop1 = sqrt(pow($p1['x']-$po['x'],2)+pow($p1['y']-$po['y'],2)); // $po->p1 (c)
+	    return acos(($p1c*$p1c+$poc*$poc-$pop1*$pop1)/(2*$p1c*$poc));
 	}
 
 ?>
