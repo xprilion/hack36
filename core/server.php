@@ -139,7 +139,8 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 			$ret["answer"] = $info["alldata"];
 		}
 
-		$restr = json_encode($ret);
+		$restr = json_encode($ret, JSON_UNESCAPED_SLASHES);
+		echo $restr;
 		$Server->wsSend($clientID, $restr);
 	}
 }
