@@ -4,6 +4,7 @@ import '../index.css';
 import {geolocated} from 'react-geolocated';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import DatePicker from 'material-ui/DatePicker';
 import Tablecomp from './traintable';
 const style = {
   height: 500,
@@ -22,12 +23,14 @@ class home extends Component {
 			latitude:'',
 			longitude:'',
 			load:'',
-			tabload:{}
+			tabload:{},
+			date: ''
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.onTrain = this.onTrain.bind(this);
 		this.notOnTrain = this.notOnTrain.bind(this);
 		this.stopIt = this.stopIt.bind(this);
+		this.handleDate = this.handleDate.bind(this);
 	}
 	componentDidMount(){
 		this.ws = new WebSocket('ws://127.0.0.1:9300');
@@ -59,6 +62,9 @@ class home extends Component {
 			}
 		});
 	}
+	handleDate = (event,date)=>{
+		this.setState({date:date});
+	}
 	componentDidUpdate(previousProps, previousState){
 		if(this.state.latitude !== this.props.coords.latitude && this.state.longitude !== this.props.coords.longitude) {
 	     this.setState({latitude:this.props.coords.latitude,longitude:this.props.coords.longitude});
@@ -71,18 +77,18 @@ class home extends Component {
 
 				<Paper className="paper" style={style} zDepth={4}>
 					<TextField floatingLabelText="Train number" ref="trainno" onChange={this.handleChange}/> <br/>
+			        <DatePicker hintText="Enter the date" onChange={this.handleDate}/>
 			        <RaisedButton label="On Train" onClick={this.onTrain} /><br/>
 			        <RaisedButton label="Not on Train"  onClick={this.notOnTrain}/><br/>
 			        <RaisedButton label="Stop the server"  onClick={this.stopIt}/>
-
-			        {!this.props.isGeolocationAvailable
-		      ? <div>Your browser does not support Geolocation</div>
-		      : !this.props.isGeolocationEnabled
-		        ? <div>Geolocation is not enabled</div>
-		        : this.props.coords
-		          ? <div></div>
-		          : <div>Loading up the app, please wait&hellip; </div>
-		      }
+					{!this.props.isGeolocationAvailable
+				      ? <div>Your browser does not support Geolocation</div>
+				      : !this.props.isGeolocationEnabled
+				        ? <div>Geolocation is not enabled</div>
+				        : this.props.coords
+				          ? <div></div>
+				          : <div>Loading up the app, please wait&hellip; </div>
+				    }
 				</Paper>
 				<Tablecomp data={this.state.tabload}/>
       		</div>
