@@ -17,7 +17,7 @@ class home extends Component {
 		super(props);
 		this.state = {
 			type:'train',
-			train_no: '',
+			trainNo: '',
 			onTrain:'',
 			latitude:'',
 			longitude:'',
@@ -28,7 +28,7 @@ class home extends Component {
 		this.onTrain = this.onTrain.bind(this);
 		this.notOnTrain = this.notOnTrain.bind(this);
 		this.stopIt = this.stopIt.bind(this);
-	}	
+	}
 	componentDidMount(){
 		this.ws = new WebSocket('ws://127.0.0.1:9300');
 	}
@@ -51,7 +51,7 @@ class home extends Component {
 				console.log(evt.data);
 			}
 		});
-		
+
 	}
 	stopIt = ()=>{
 		this.setState({type:'admin',load:'stop'},()=>{
@@ -70,13 +70,13 @@ class home extends Component {
 	render() {
 		return (
 			<div className="hp">
-				
+
 				<Paper className="paper" style={style} zDepth={4}>
-					<TextField floatingLabelText="Train number" ref="trainno" onChange={this.handleChange}/> <br/>     
+					<TextField floatingLabelText="Train number" ref="trainno" onChange={this.handleChange}/> <br/>
 			        <RaisedButton label="On Train" onClick={this.onTrain} /><br/>
 			        <RaisedButton label="Not on Train"  onClick={this.notOnTrain}/><br/>
 			        <RaisedButton label="Stop the server"  onClick={this.stopIt}/>
-			        
+
 			        {!this.props.isGeolocationAvailable
 		      ? <div>Your browser does not support Geolocation</div>
 		      : !this.props.isGeolocationEnabled

@@ -38,7 +38,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 
 		if ($data["onTrain"] == "no") {
 
-			$ret["answer"] = checkTrain($data["trainNo"]);
+			$ret["answer"] = json_decode(checkTrain($data["trainNo"]), TRUE);
 
 			$thash = md5($data["trainNo"]);
 
@@ -59,8 +59,8 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 
 		}
 		else if ($data["onTrain"] == "yes") {
-			$clientLon = $data["lon"];
-			$clientLat = $data["lat"];
+			$clientLon = $data["longitude"];
+			$clientLat = $data["latitude"];
 
 			$thash = md5($data["trainNo"]);
 
@@ -79,11 +79,9 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 				}
 			}
 
-			$info = userTrainLoc($data["trainNo"], $clientLon, $clientLat, $trainLon, $trainLat);
+			$info = json_decode(userTrainLoc($data["trainNo"], $clientLon, $clientLat, $trainLon, $trainLat), TRUE);
 
 			$infoScore = $info["score"];
-			$infoLat = $info["lat"];
-			$infoLon = $info["lon"];
 
 			$newScore = 0.0;
 
@@ -105,7 +103,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 						$newScore -= 0.25*$infoScore;
 					}
 
-					$sqlClient = "UPDATE clients SET score='$newScore', lat='$infoLat', lon = '$infoLon'";
+					$sqlClient = "UPDATE clients SET score='$newScore', lat='$clientLat', lon = '$clientLon'";
 
 					//QUERY
 

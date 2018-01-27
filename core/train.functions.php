@@ -68,6 +68,8 @@
 
 		$trainPos = 0;
 
+		$prevPos = 0;
+
 		foreach ($stations as $s){
 			if($s["has_departed"] == 1){
 				$trainPos++;
@@ -101,7 +103,7 @@
 
 		$scoreCurLast = 50;
 
-		$negCurlast = min(50, $angleCurLast*5);
+		$negCurLast = min(50, $angleCurLast*5);
 		$scoreCurLast -= $negCurLast;
 
 		$score = exp(-0.5*$dist)*($scorePrevCur+$scorePrevNext+$scoreCurLast);
