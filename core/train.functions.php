@@ -28,7 +28,9 @@
 		$r["lon"] = $lon2;
 		$r["alldata"] = $res;
 
-		return json_encode($r);
+		$json = json_encode($r, JSON_UNESCAPED_SLASHES);
+		echo $json;
+		return $json;
 
 	}
 
@@ -111,7 +113,9 @@
 		$r["score"] = $score;
 		$r["alldata"] = $res;
 
-		return json_encode($r);
+		$json = json_encode($r, JSON_UNESCAPED_SLASHES);
+		echo $json;
+		return $json;
 	}
 
 	$dlat = 25.1540;
