@@ -25,3 +25,11 @@ a{
 	background-color: #00ACA1!important;
 	color: #fff!important;
 }
+.susu{
+  margin-left: 10px;
+}
+.stats{
+  margin-top: 40px;
+  line-height: 22px;
+  text-transform: uppercase;
+}

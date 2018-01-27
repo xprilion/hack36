@@ -6,6 +6,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui/DatePicker';
 import Tablecomp from './traintable';
+import Stuff from './stuff';
 const style = {
   height: 500,
   width: 500,
@@ -24,7 +25,8 @@ class home extends Component {
 			longitude:'',
 			load:'',
 			tabload:{},
-			date: ''
+			date: '',
+			showstats:false
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.onTrain = this.onTrain.bind(this);
@@ -42,8 +44,7 @@ class home extends Component {
 		this.setState({onTrain:'yes'},()=>{
 			this.ws.send(JSON.stringify(this.state));
 			this.ws.onmessage = evt =>{
-				this.setState({tabload:JSON.parse(evt.data)});
-				console.log(JSON.parse(evt.data));	
+				this.setState({tabload:JSON.parse(evt.data),showstats:true});
 			}
 		});
 	}
@@ -51,7 +52,7 @@ class home extends Component {
 		this.setState({onTrain:'no'},()=>{
 			this.ws.send(JSON.stringify(this.state));
 			this.ws.onmessage = evt =>{
-				this.setState({tabload:JSON.parse(evt.data)});			}
+				this.setState({tabload:JSON.parse(evt.data),showstats:false});			}
 		});
 
 	}
@@ -78,10 +79,9 @@ class home extends Component {
 
 				<Paper className="paper" style={style} zDepth={4}>
 					<TextField floatingLabelText="Train number" ref="trainno" onChange={this.handleChange}/> <br/>
-			        <DatePicker hintText="Enter the date" onChange={this.handleDate}/>
-			        <RaisedButton label="On Train" onClick={this.onTrain} /><br/>
-			        <RaisedButton label="Not on Train"  onClick={this.notOnTrain}/><br/>
-			        <RaisedButton label="Stop the server"  onClick={this.stopIt}/>
+			        <DatePicker hintText="Enter the date" onChange={this.handleDate}/><br/>
+			        <RaisedButton label="On Train" primary={true} onClick={this.onTrain} />
+			        <RaisedButton className="susu" label="Not on Train" secondary={true}  onClick={this.notOnTrain}/><br/><br/>
 					{!this.props.isGeolocationAvailable
 				      ? <div>Your browser does not support Geolocation</div>
 				      : !this.props.isGeolocationEnabled
@@ -90,8 +90,9 @@ class home extends Component {
 				          ? <div></div>
 				          : <div>Loading up the app, please wait&hellip; </div>
 				    }
+				    {this.state.showstats?<Stuff data={this.state.tabload}/>:<div></div>}
 				</Paper>
-				
+				<Tablecomp data={this.state.tabload}/>
       		</div>
 		);
 	}
