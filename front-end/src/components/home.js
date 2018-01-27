@@ -22,7 +22,7 @@ class home extends Component {
 			latitude:'',
 			longitude:'',
 			load:'',
-			tab_load:''
+			tabload:{}
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.onTrain = this.onTrain.bind(this);
@@ -47,8 +47,7 @@ class home extends Component {
 		this.setState({onTrain:'no'},()=>{
 			this.ws.send(JSON.stringify(this.state));
 			this.ws.onmessage = evt =>{
-				this.setState({tab_load:evt.data});
-			}
+				this.setState({tabload:JSON.parse(evt.data)});			}
 		});
 
 	}
@@ -85,7 +84,7 @@ class home extends Component {
 		          : <div>Loading up the app, please wait&hellip; </div>
 		      }
 				</Paper>
-				<Tablecomp data={this.state.tab_load}/>
+				<Tablecomp data={this.state.tabload}/>
       		</div>
 		);
 	}

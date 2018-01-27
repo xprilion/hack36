@@ -3,7 +3,6 @@ import { Table,TableBody,TableHeader,TableHeaderColumn,TableRow,TableRowColumn }
  
 class traintable extends Component {
 	render() {
-		console.log(this.props.data);
 		return (
 			<div>
 				<Table>
@@ -18,27 +17,18 @@ class traintable extends Component {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{this.props.data.answer && this.props.data.answer.route.map(res=>{
+						{this.props.data.answer && this.props.data.answer.alldata.route.map(route=>{
 							return(
-								<TableRow>
-									<TableRowColumn>{res.station.name}</TableRowColumn>
-									<TableRowColumn>{res.day}</TableRowColumn>
-									<TableRowColumn>{res.schdep}</TableRowColumn>
-									<TableRowColumn>{res.actarr}</TableRowColumn>
-									<TableRowColumn>{res.actdep}</TableRowColumn>
-									<TableRowColumn>{res.status}</TableRowColumn>
+								<TableRow key={route.station.lat}>
+									<TableRowColumn>{route.station.name}</TableRowColumn>
+									<TableRowColumn>{route.day}</TableRowColumn>
+									<TableRowColumn>{route.schdep}</TableRowColumn>
+									<TableRowColumn>{route.actarr}</TableRowColumn>
+									<TableRowColumn>{route.actdep}</TableRowColumn>
+									<TableRowColumn>{route.status}</TableRowColumn>
 								</TableRow>
 								)
 						})}
-						<TableRow>
-							<TableRowColumn>1</TableRowColumn>
-							<TableRowColumn>2</TableRowColumn>
-							<TableRowColumn>3</TableRowColumn>
-							<TableRowColumn>4</TableRowColumn>
-							<TableRowColumn>5</TableRowColumn>
-							<TableRowColumn>6</TableRowColumn>
-							<TableRowColumn>7</TableRowColumn>
-						</TableRow>
 					</TableBody>
 				</Table>
 			</div>
