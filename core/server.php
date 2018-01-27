@@ -43,7 +43,11 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 
 		if ($data["onTrain"] == "no") {
 
-			$ret["answer"] = json_decode(checkTrain($trainNo, $trainDate), TRUE);
+			$info = json_decode(checkTrain($trainNo, $trainDate), TRUE);
+			$ret["answer"] = $info;
+
+			$infoLat = $info["lat"];
+			$infoLon = $info["lon"];
 
 			$thash = md5($trainNo.$trainDate);
 
@@ -69,12 +73,13 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 			$sqlTrain = "";
 
 			if($trainIs){
-				$sqlTrain = "UPDATE train_loc SET lat='$newLat' AND lon='$trainLat' WHERE thash='$trainLon'";
+				$sqlTrain = "UPDATE train_loc SET lat='$infoLat' AND lon='$infoLon' WHERE thash='$thash'";
 			}
 			else{
-				$sqlTrain = "INSERT INTO train_loc (thash, lat, lon) VALUES ('$thash', '$trainLat', '$trainLon')";
+				$sqlTrain = "INSERT INTO train_loc (thash, lat, lon) VALUES ('$thash', '$infoLat', '$infoLon')";
 			}
 
+			echo '\n'.$sqlTrain.'\n';
 			if(mysqli_query($db, $sqlTrain)){
 				;
 			}
@@ -108,9 +113,16 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 				echo mysqli_error($db);
 			}
 
-			$info = json_decode(userTrainLoc($trainNo, $trainDate, $clientLon, $clientLat, $trainLon, $trainLat), TRUE);
+			$info = json_decode(userTrainLoc($trainNo, $trainDate, $clientLon, $clientLat,  $trainLon, $trainLat, $trainIs), TRUE);
+
+			$infoLat = $info["lat"];
+			$infoLon = $info["lon"];
+
+			print_r($info);
 
 			$infoScore = $info["score"];
+
+			echo "|".$infoScore."|";
 
 			$newScore = 0.0;
 
@@ -124,6 +136,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 					$res = mysqli_fetch_assoc($result);
 
 					$score = $res["score"];
+					$score = round($score,15);
 
 					$newScore = 0.80*$score;
 					if($infoScore>=$score){
@@ -133,17 +146,22 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 						$newScore -= 0.25*$infoScore;
 					}
 
-					$sqlClient = "UPDATE clients SET score='$newScore', lat='$clientLat' AND lon = '$clientLon' WHERE chash = '$chash'";
+					$newScore = round($newScore,15);
+
+					$sqlClient = "UPDATE clients SET score='$newScore', lat='$clientLat', lon = '$clientLon' WHERE chash = '$chash' AND thash='$thash'";
 
 					//QUERY
 
 				}
 				else{
+					$infoScore = round($infoScore,15);
+
 					$sqlClient = "INSERT INTO clients (chash, thash, lat, lon, score) VALUES ('$chash', '$thash', '$clientLat', '$clientLon', '$infoScore')";
 
 					//QUERY
 				}
 
+				echo '\n'.$sqlClient.'\n';
 				if(mysqli_query($db, $sqlClient)){
 					;
 				}
@@ -156,6 +174,11 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 				echo mysqli_error($db);
 			}
 
+			if($trainIs==0){
+				$trainLat = $infoLat;
+				$trainLon = $infoLon;
+			}
+
 			$diffLat = $trainLat - $clientLat;
 			$newLat = $trainLat+$newScore*$diffLat;
 
@@ -165,12 +188,13 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 			$sqlTrain = "";
 
 			if($trainIs){
-				$sqlTrain = "UPDATE train_loc SET lat='$newLat' AND lon='$newLon' WHERE thash='$thash'";
+				$sqlTrain = "UPDATE train_loc SET lat='$newLat', lon='$newLon' WHERE thash='$thash'";
 			}
 			else{
 				$sqlTrain = "INSERT INTO train_loc (thash, lat, lon) VALUES ('$thash', '$newLat', '$newLon')";
 			}
 
+			echo '\n'.$sqlTrain.'\n';
 			if(mysqli_query($db, $sqlTrain)){
 				;
 			}
@@ -178,7 +202,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 				echo mysqli_error($db);
 			}
 
-			$ret["answer"] = $info["alldata"];
+			$ret["answer"] = $info;
 		}
 
 		$restr = json_encode($ret, JSON_UNESCAPED_SLASHES);
