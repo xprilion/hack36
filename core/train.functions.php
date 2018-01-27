@@ -37,7 +37,7 @@
 
 	}
 
-	function userTrainLoc($trainNo, $trainDate, $lon1, $lat1, $tlon, $tlat){
+	function userTrainLoc($trainNo, $trainDate, $lon1, $lat1, $tlon, $tlat, $isData){
 
 		$date = date('d-m-Y', strtotime($trainDate));
 		$url = "https://api.railwayapi.com/v2/live/train/$trainNo/date/$date/apikey/86j677u0rd/";
@@ -61,8 +61,18 @@
 		$curLat = $res["current_station"]["lat"];
 		$curLon = $res["current_station"]["lng"];
 
+
+
 		$unit = "K";
 
+		echo "---".$isData."---";
+
+		if($isData==0){
+			$tlat = $curLat;
+			$tlon = $curLon;
+		}
+
+		echo "tlat: $tlat and tlon: $tlon |||";
 		$dist = distance($lat1, $lon1, $tlat, $tlon, $unit);
 
 		$nowLoc = Array('x'=> $lon1, 'y'=> $lat1);
@@ -122,6 +132,9 @@
 		$r["score"] = $score;
 		$r["alldata"] = $res;
 
+		$r["lat"] = $curLat;
+		$r["lon"] = $curLon;
+
 		$json = json_encode($r, JSON_UNESCAPED_SLASHES);
 		// echo $json;
 		return $json;
@@ -149,6 +162,11 @@
 	    $poc = sqrt(pow($c['x']-$po['x'],2)+pow($c['y']-$po['y'],2)); // $po->$c (b)
 	    $p1c = sqrt(pow($c['x']-$p1['x'],2)+pow($c['y']-$p1['y'],2)); // p1->c (a)
 	    $pop1 = sqrt(pow($p1['x']-$po['x'],2)+pow($p1['y']-$po['y'],2)); // $po->p1 (c)
+
+	    if((2*$p1c*$poc)==0){
+	    	return 0;
+	    }
+
 	    return acos(($p1c*$p1c+$poc*$poc-$pop1*$pop1)/(2*$p1c*$poc));
 	}
 
