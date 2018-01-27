@@ -3,6 +3,7 @@ import { Table,TableBody,TableHeader,TableHeaderColumn,TableRow,TableRowColumn }
  
 class traintable extends Component {
 	render() {
+		console.log(JSON.stringify(this.props.data));
 		return (
 			<div>
 				<Table>
@@ -17,7 +18,7 @@ class traintable extends Component {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{this.props.data.route.map(res=>{
+						{this.props.data.answer && this.props.data.answer.route.map(res=>{
 							return(
 								<TableRow>
 									<TableRowColumn>{res.station.name}</TableRowColumn>
