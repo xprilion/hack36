@@ -38,7 +38,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 
 		if ($data["onTrain"] == "no") {
 
-			$res["answer"] = checkTrain($data["trainNo"]);
+			$ret["answer"] = checkTrain($data["trainNo"]);
 
 			$thash = md5($data["trainNo"]);
 
@@ -136,10 +136,10 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 
 			$mysqli->query($sqlTrain);
 
-			$res["answer"] = $info["alldata"];
+			$ret["answer"] = $info["alldata"];
 		}
 
-		$restr = json_encode($res);
+		$restr = json_encode($ret);
 		$Server->wsSend($clientID, $restr);
 	}
 }
