@@ -20,7 +20,8 @@ class home extends Component {
 			onTrain:'',
 			latitude:'',
 			longitude:'',
-			load:''
+			load:'',
+			tab_load:''
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.onTrain = this.onTrain.bind(this);
@@ -45,6 +46,7 @@ class home extends Component {
 		this.setState({onTrain:'no'},()=>{
 			this.ws.send(JSON.stringify(this.state));
 			this.ws.onmessage = evt =>{
+				this.setState({tab_load:evt.data});
 				console.log(evt.data);
 			}
 		});
@@ -80,7 +82,7 @@ class home extends Component {
 		        ? <div>Geolocation is not enabled</div>
 		        : this.props.coords
 		          ? <div></div>
-		          : <div>Loading up the app&hellip; </div>
+		          : <div>Loading up the app, please wait&hellip; </div>
 		      }
 				</Paper>
       		</div>
