@@ -50,8 +50,9 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 			$sql = "SELECT * FROM train_loc where thash = '$thash'";
 			if($result = $mysqli->query($sql)){
 				if ($result->num_rows > 0) {
-					$trainLat = $result["lat"];
-					$trainLon = $result["lon"];
+					$res = $mysqli->fetch_assoc($result);
+					$trainLat = $res["lat"];
+					$trainLon = $res["lon"];
 					$trainIs = 1;
 				}
 			}
@@ -71,8 +72,9 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 			$sql = "SELECT * FROM train_loc where thash = '$thash'";
 			if($result = $mysqli->query($sql)){
 				if ($result->num_rows > 0) {
-					$trainLat = $result["lat"];
-					$trainLon = $result["lon"];
+					$res = $mysqli->fetch_assoc($result);
+					$trainLat = $res["lat"];
+					$trainLon = $res["lon"];
 					$trainIs = 1;
 				}
 			}
@@ -80,6 +82,9 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 			$info = userTrainLoc($data["trainNo"], $clientLon, $clientLat, $trainLon, $trainLat);
 
 			$infoScore = $info["score"];
+			$infoLat = $info["lat"];
+			$infoLon = $info["lon"];
+
 			$newScore = 0.0;
 
 			$sql = "SELECT * FROM clients where chash='$chash' AND thash = '$thash'";
@@ -88,7 +93,9 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 				$sqlClient = "";
 
 				if ($result->num_rows > 0) {
-					$score = $result["score"];
+					$res = $mysqli->fetch_assoc($result);
+
+					$score = $res["score"];
 
 					$newScore = 0.80*$score;
 					if($infoScore>=$score){
@@ -104,7 +111,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 
 				}
 				else{
-					$sqlClient = "INSERT INTO clients (chash, thash, lat, lon, score) VALUES ('$chash', '$thash', '$lat', $lon', $infoScore)";
+					$sqlClient = "INSERT INTO clients (chash, thash, lat, lon, score) VALUES ('$chash', '$thash', '$clientLat', $clientLon', $infoScore)";
 
 					//QUERY
 				}
