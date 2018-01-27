@@ -42,7 +42,8 @@ class home extends Component {
 		this.setState({onTrain:'yes'},()=>{
 			this.ws.send(JSON.stringify(this.state));
 			this.ws.onmessage = evt =>{
-				console.log(evt.data);
+				this.setState({tabload:JSON.parse(evt.data)});
+				console.log(JSON.parse(evt.data));	
 			}
 		});
 	}
@@ -90,7 +91,7 @@ class home extends Component {
 				          : <div>Loading up the app, please wait&hellip; </div>
 				    }
 				</Paper>
-				<Tablecomp data={this.state.tabload}/>
+				
       		</div>
 		);
 	}
