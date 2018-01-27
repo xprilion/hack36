@@ -10,6 +10,8 @@
 
 	define("SECURE", FALSE);    // FOR DEVELOPMENT ONLY!!!!
 
-	$mysqli = new mysqli(HOST, USER, PASSWORD, DATABASE);
+	// $mysqli = new mysqli(HOST, USER, PASSWORD, DATABASE);
+
+	$db = mysqli_connect(HOST, USER, PASSWORD, DATABASE);
 
 ?>

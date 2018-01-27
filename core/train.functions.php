@@ -29,7 +29,7 @@
 		$r["alldata"] = $res;
 
 		$json = json_encode($r, JSON_UNESCAPED_SLASHES);
-		echo $json;
+		//echo $json;
 		return $json;
 
 	}
@@ -81,7 +81,7 @@
 
 		$nextPos = $trainPos;
 
-		echo "<br>Prev Station=> ".$stations[$prevPos]["station"]["name"].'<br>Prev Station=> '.$stations[$nextPos]["station"]["name"].'<br>';
+		//echo "<br>Prev Station=> ".$stations[$prevPos]["station"]["name"].'<br>Next Station=> '.$stations[$nextPos]["station"]["name"].'<br>';
 
 		$prevStation = Array('x'=> $stations[$prevPos]["station"]["lng"], 'y'=> $stations[$prevPos]["station"]["lat"]);
 		$nextStation = Array('x'=> $stations[$nextPos]["station"]["lng"], 'y'=> $stations[$nextPos]["station"]["lat"]);
@@ -116,7 +116,7 @@
 		$r["alldata"] = $res;
 
 		$json = json_encode($r, JSON_UNESCAPED_SLASHES);
-		echo $json;
+		// echo $json;
 		return $json;
 	}
 
