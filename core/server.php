@@ -118,7 +118,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 			$infoLat = $info["lat"];
 			$infoLon = $info["lon"];
 
-			print_r($info);
+			//print_r($info);
 
 			$infoScore = $info["score"];
 

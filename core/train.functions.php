@@ -106,7 +106,12 @@
 
 		$anglePrevNext = getAngle($nowLoc, $prevStation, $nextStation);
 		$anglePrevCur = getAngle($nowLoc, $prevStation, $currentStation);
-		$angleCurLast = getAngle($nowLoc, $currentStation, $lastLoc);
+
+		$angleCurLast = 0;
+
+		if($isData==1){
+			$angleCurLast = getAngle($nowLoc, $currentStation, $lastLoc);
+		}
 
 		$scorePrevNext = 30;
 
@@ -120,11 +125,23 @@
 
 		$scoreCurLast = 50;
 
-		$negCurLast = min(50, $angleCurLast*5);
-		$scoreCurLast -= $negCurLast;
+		if($isData==1){
+			$negCurLast = min(50, $angleCurLast*5);
+			$scoreCurLast -= $negCurLast;
+		}
+		else{
+			$scoreCurLast = 0;
+		}
 
 		$score = exp(-0.5*$dist)*($scorePrevCur+$scorePrevNext+$scoreCurLast);
-		$score /= 125.0;
+
+		if($isData==1){
+			$score /= 125.0;
+		}
+
+		else{
+			$score /= 75.0;
+		}
 
 		$r["anglePrevNext"] = $anglePrevNext;
 		$r["anglePrevCur"] = $anglePrevCur;
